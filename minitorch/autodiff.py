@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Tuple
+from typing import Any, Iterable, Tuple
 
 from typing_extensions import Protocol
 
@@ -22,8 +22,11 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
     Returns:
         An approximation of $f'_i(x_0, \ldots, x_{n-1})$
     """
-    # TODO: Implement for Task 1.1.
-    raise NotImplementedError("Need to implement for Task 1.1")
+    x_next = [x for x in vals]
+    x_prev = [x for x in vals]
+    x_next[arg] += epsilon
+    x_prev[arg] -= epsilon
+    return (f(*x_next) - f(*x_prev)) / (2 * epsilon)
 
 
 variable_count = 1
@@ -61,8 +64,24 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
     Returns:
         Non-constant Variables in topological order starting from the right.
     """
-    # TODO: Implement for Task 1.4.
-    raise NotImplementedError("Need to implement for Task 1.4")
+    top_sort = []
+    used = dict()
+
+    def dfs(variable):
+        if used.get(variable.unique_id) is not None:
+            return
+        if variable.is_constant():
+            return
+        used[variable.unique_id] = True
+        if not variable.is_leaf():
+            for parent in variable.parents:
+                if not parent.is_constant():
+                    dfs(parent)
+        top_sort.append(variable)
+
+    dfs(variable)
+    top_sort = top_sort[::-1]
+    return top_sort
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
@@ -76,8 +95,19 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
 
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
-    # TODO: Implement for Task 1.4.
-    raise NotImplementedError("Need to implement for Task 1.4")
+    top_sort = topological_sort(variable)
+    derivs = dict()
+    derivs[variable.unique_id] = deriv
+    for var in top_sort:
+        cur_deriv = derivs[var.unique_id]
+        if not var.is_leaf():
+            for inp, grad in var.chain_rule(cur_deriv):
+                if not inp.is_constant():
+                    if derivs.get(inp.unique_id) is None:
+                        derivs[inp.unique_id] = 0.0
+                    derivs[inp.unique_id] += grad
+        else:
+            var.accumulate_derivative(cur_deriv)
 
 
 @dataclass
