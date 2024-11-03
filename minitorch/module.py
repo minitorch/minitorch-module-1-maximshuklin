@@ -34,14 +34,12 @@ class Module:
         self.training = True
         for submodule in self.modules():
             submodule.train()
-        
 
     def eval(self) -> None:
         "Set the mode of this module and all descendent modules to `eval`."
         self.training = False
         for submodule in self.modules():
             submodule.eval()
-
 
     def named_parameters(self) -> Sequence[Tuple[str, Parameter]]:
         """

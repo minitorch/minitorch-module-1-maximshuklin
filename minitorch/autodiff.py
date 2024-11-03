@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Tuple
+from typing import Any, Iterable, Tuple
 
 from typing_extensions import Protocol
 
@@ -78,7 +78,7 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
                 if not parent.is_constant():
                     dfs(parent)
         top_sort.append(variable)
-    
+
     dfs(variable)
     top_sort = top_sort[::-1]
     return top_sort

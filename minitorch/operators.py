@@ -133,7 +133,8 @@ def map(fn: Callable[[float], float]) -> Callable[[Iterable[float]], Iterable[fl
          A function that takes a list, applies `fn` to each element, and returns a
          new list
     """
-    map_fn = lambda x: [fn(elem) for elem in x]
+    def map_fn(x):
+        return [fn(elem) for elem in x]
     return map_fn
 
 
@@ -158,7 +159,8 @@ def zipWith(
          applying fn(x, y) on each pair of elements.
 
     """
-    zip_fn = lambda x, y: [fn(a, b) for a, b in zip(x, y)]
+    def zip_fn(x, y):
+        return [fn(a, b) for a, b in zip(x, y)]
     return zip_fn
 
 
@@ -187,7 +189,8 @@ def reduce(
             start = fn(elem, start)
         return start
 
-    reduce_fn = lambda ls: get_reduction(start, ls, fn)
+    def reduce_fn(ls):
+        return get_reduction(start, ls, fn)
     return reduce_fn
 
 
