@@ -56,7 +56,7 @@ class Module:
             for name, submodule in module._modules.items():
                 list_of_params += get_named_parameters(submodule, prefix + name + '.')
             return list_of_params
-        
+
         return get_named_parameters(self)
 
     def parameters(self) -> Sequence[Parameter]:
